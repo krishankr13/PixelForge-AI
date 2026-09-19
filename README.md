@@ -1,16 +1,56 @@
-# React + Vite
+# PixelForge AI 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+PixelForge AI is an AI-powered creative studio for generating, analyzing, remixing, and managing AI-generated images.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔐 User registration and JWT authentication
+- 📝 Text-to-image generation
+- 🖼️ Image caption generation
+- 🧠 Image-to-prompt generation
+- 🎨 AI image remix / similar image generation
+- 💾 Save creations to personal history
+- 📜 Persistent creation history with MongoDB
+- 📥 Download generated images
+- 📋 Copy generated prompts
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Frontend
+- React
+- Vite
+- Tailwind CSS
+- JavaScript
 
-## Expanding the Oxlint configuration
+### Backend
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT
+- bcryptjs
+- Multer
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### AI
+- Hugging Face Inference API
+- Stable Diffusion XL
+- FLUX.1-Kontext
+- Salesforce BLIP
+
+## 🏗️ Architecture
+
+```text
+User
+  │
+  ▼
+React Frontend
+  │
+  ├── Authentication ──► Express API ──► MongoDB
+  │
+  ├── Text → Image ────► Hugging Face
+  │
+  ├── Image → Caption ─► Python + BLIP
+  │
+  ├── Image → Prompt ──► Python + BLIP
+  │
+  └── Image → Remix ───► Express + Hugging Face
