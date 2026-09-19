@@ -1,18 +1,35 @@
 const express = require("express");
+
 const cors = require("cors");
+
 const mongoose = require("mongoose");
+
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
+
 const promptRoutes = require("./routes/promptRoutes");
+
+const imageRoutes = require("./routes/imageRoutes");
+
+const creationRoutes = require("./routes/creationRoutes");
 
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
+// Serve generated images
+app.use("/uploads", express.static("uploads"));
+
 app.use("/api/auth", authRoutes);
+
 app.use("/api/prompt", promptRoutes);
+
+app.use("/api/image", imageRoutes);
+
+app.use("/api/creation", creationRoutes);
 
 app.get("/", (req, res) => {
   res.json({

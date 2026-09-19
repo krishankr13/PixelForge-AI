@@ -44,92 +44,101 @@ function CaptionGenerator() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Caption generation failed"
+          data.message ||
+            "Caption generation failed"
         );
       }
 
       setCaption(data.caption);
-      setStatus("Caption generated successfully! 🚀");
+      setStatus(
+        "Caption generated successfully! 🚀"
+      );
     } catch (error) {
-      console.error("Caption generation error:", error);
-      setStatus("Failed to generate caption. Please try again.");
+      console.error(
+        "Caption generation error:",
+        error
+      );
+
+      setStatus(
+        "Failed to generate caption. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6">
-      <div className="max-w-4xl mx-auto">
-
-        <h1 className="text-3xl font-bold">
-          Image Caption Generator
-        </h1>
-
-        <p className="text-slate-400 mt-2">
-          Upload an image and generate an AI-powered caption.
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+      <div className="mb-6">
+        <p className="text-sm font-medium text-purple-400">
+          UNDERSTAND YOUR IMAGE
         </p>
 
-        <div className="mt-8 border-2 border-dashed border-slate-700 rounded-2xl p-8 text-center">
+        <h2 className="mt-2 text-2xl font-bold">
+          Image → Caption
+        </h2>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="block mx-auto text-sm"
-          />
-
-          {preview && (
-            <div className="mt-6">
-              <img
-                src={preview}
-                alt="Preview"
-                className="max-h-80 mx-auto rounded-xl object-contain"
-              />
-            </div>
-          )}
-
-        </div>
-
-        {image && (
-          <div className="mt-6 flex gap-3">
-
-            <button
-              onClick={generateCaption}
-              disabled={loading}
-              className="flex-1 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold hover:opacity-90 disabled:opacity-50"
-            >
-              {loading
-                ? "Generating..."
-                : caption
-                ? "🔄 Different Caption"
-                : "Generate Caption"}
-            </button>
-
-          </div>
-        )}
-
-        {status && (
-          <p className="mt-4 text-center text-slate-400">
-            {status}
-          </p>
-        )}
-
-        {caption && (
-          <div className="mt-6 rounded-2xl border border-slate-700 bg-slate-900 p-6">
-
-            <h2 className="text-lg font-semibold mb-2">
-              AI Generated Caption
-            </h2>
-
-            <p className="text-slate-300 leading-relaxed">
-              {caption}
-            </p>
-
-          </div>
-        )}
-
+        <p className="mt-2 text-sm text-gray-500">
+          Upload an image and let AI describe
+          what it sees.
+        </p>
       </div>
+
+      {/* Upload */}
+      <div className="rounded-xl border-2 border-dashed border-white/10 bg-black/20 p-6 text-center">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="mx-auto block text-sm text-gray-400"
+        />
+
+        {preview && (
+          <div className="mt-6">
+            <img
+              src={preview}
+              alt="Uploaded preview"
+              className="mx-auto max-h-80 rounded-xl object-contain"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Generate */}
+      {image && (
+        <button
+          type="button"
+          onClick={generateCaption}
+          disabled={loading}
+          className="mt-5 w-full rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-3 font-semibold transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {loading
+            ? "Analyzing Image..."
+            : caption
+            ? "🔄 Generate Different Caption"
+            : "✨ Generate Caption"}
+        </button>
+      )}
+
+      {/* Status */}
+      {status && (
+        <p className="mt-4 text-center text-sm text-gray-500">
+          {status}
+        </p>
+      )}
+
+      {/* Caption */}
+      {caption && (
+        <div className="mt-6 rounded-xl border border-purple-500/20 bg-purple-500/5 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wider text-purple-400">
+            AI Generated Caption
+          </p>
+
+          <p className="mt-3 leading-relaxed text-gray-300">
+            {caption}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
