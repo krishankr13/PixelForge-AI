@@ -4,11 +4,18 @@ const Creation = require("../models/Creation");
 
 const router = express.Router();
 
+// -----------------------------------
+// Authentication Middleware
+// -----------------------------------
+
 const authenticateUser = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
       return res.status(401).json({
         message: "Authentication required",
       });
@@ -21,7 +28,8 @@ const authenticateUser = (req, res, next) => {
       process.env.JWT_SECRET
     );
 
-    req.userId = decoded.userId || decoded.id;
+    req.userId =
+      decoded.userId || decoded.id;
 
     next();
   } catch (error) {
@@ -31,60 +39,88 @@ const authenticateUser = (req, res, next) => {
   }
 };
 
-// Save creation
-router.post("/save", authenticateUser, async (req, res) => {
-  try {
-    const {
-      prompt,
-      style,
-      ratio,
-      imageUrl,
-    } = req.body;
+// -----------------------------------
+// Save Creation
+// -----------------------------------
 
-    if (!prompt || !imageUrl) {
-      return res.status(400).json({
-        message: "Prompt and image are required",
+router.post(
+  "/save",
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const {
+        prompt,
+        style,
+        ratio,
+        imageUrl,
+      } = req.body;
+
+      if (!prompt || !imageUrl) {
+        return res.status(400).json({
+          message:
+            "Prompt and image are required",
+        });
+      }
+
+      const creation =
+        await Creation.create({
+          user: req.userId,
+          prompt,
+          style,
+          ratio,
+          imageUrl,
+        });
+
+      res.status(201).json({
+        message:
+          "Creation saved successfully",
+        creation,
+      });
+    } catch (error) {
+      console.error(
+        "Save Creation Error:",
+        error.message
+      );
+
+      res.status(500).json({
+        message:
+          "Failed to save creation",
       });
     }
-
-    const creation = await Creation.create({
-      user: req.userId,
-      prompt,
-      style,
-      ratio,
-      imageUrl,
-    });
-
-    res.status(201).json({
-      message: "Creation saved successfully",
-      creation,
-    });
-  } catch (error) {
-    console.error("Save Creation Error:", error.message);
-
-    res.status(500).json({
-      message: "Failed to save creation",
-    });
   }
-});
+);
 
-// Get user's creations
-router.get("/history", authenticateUser, async (req, res) => {
-  try {
-    const creations = await Creation.find({
-      user: req.userId,
-    }).sort({ createdAt: -1 });
+// -----------------------------------
+// Get User's Creations
+// -----------------------------------
 
-    res.json({
-      creations,
-    });
-  } catch (error) {
-    console.error("History Error:", error.message);
+router.get(
+  "/history",
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const creations =
+        await Creation.find({
+          user: req.userId,
+        }).sort({
+          createdAt: -1,
+        });
 
-    res.status(500).json({
-      message: "Failed to fetch history",
-    });
-  }S
-});
+      res.json({
+        creations,
+      });
+    } catch (error) {
+      console.error(
+        "History Error:",
+        error.message
+      );
+
+      res.status(500).json({
+        message:
+          "Failed to fetch history",
+      });
+    }
+  }
+);
 
 module.exports = router;

@@ -1,13 +1,21 @@
 const OpenAI = require("openai");
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 const enhancePrompt = async (prompt, style, ratio) => {
   if (!prompt || !prompt.trim()) {
     throw new Error("Prompt is required");
   }
+
+  // OpenAI is optional.
+  // If no API key is configured, don't crash the server.
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error(
+      "AI prompt enhancement is currently unavailable."
+    );
+  }
+
+  const client = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
 
   const response = await client.responses.create({
     model: "gpt-5-mini",
