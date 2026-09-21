@@ -38,9 +38,8 @@ router.post("/generate", async (req, res) => {
 
     const image = await generateImage(prompt);
 
-    const buffer = Buffer.from(
-      await image.arrayBuffer()
-    );
+    // Cloudflare service returns a Buffer
+    const buffer = image;
 
     const uploadsDir = path.join(
       __dirname,
@@ -117,9 +116,8 @@ router.post(
         prompt
       );
 
-      const buffer = Buffer.from(
-        await image.arrayBuffer()
-      );
+      // Cloudflare service returns a Buffer
+      const buffer = image;
 
       const uploadsDir = path.join(
         __dirname,

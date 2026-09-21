@@ -1,6 +1,35 @@
-const { InferenceClient } = require("@huggingface/inference");
+const CLOUDFLARE_API_URL =
+  `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run`;
 
-const client = new InferenceClient(process.env.HF_TOKEN);
+const MODEL =
+  "@cf/black-forest-labs/flux-2-klein-9b";
+
+// -----------------------------------
+// Cloudflare AI Request
+// -----------------------------------
+
+const callCloudflareAI = async (formData) => {
+  const response = await fetch(
+    `${CLOUDFLARE_API_URL}/${MODEL}`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+      },
+      body: formData,
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    throw new Error(
+      `Cloudflare AI Error (${response.status}): ${errorText}`
+    );
+  }
+
+  return response.json();
+};
 
 // -----------------------------------
 // Text → Image
@@ -11,13 +40,24 @@ const generateImage = async (prompt) => {
     throw new Error("Prompt is required");
   }
 
-  const image = await client.textToImage({
-    provider: "auto",
-    model: "stabilityai/stable-diffusion-xl-base-1.0",
-    inputs: prompt.trim(),
-  });
+  const formData = new FormData();
 
-  return image;
+  formData.append("prompt", prompt.trim());
+  formData.append("width", "1024");
+  formData.append("height", "1024");
+
+  const result = await callCloudflareAI(formData);
+
+  if (!result?.result?.image) {
+    throw new Error(
+      "Cloudflare did not return an image"
+    );
+  }
+
+  return Buffer.from(
+    result.result.image,
+    "base64"
+  );
 };
 
 // -----------------------------------
@@ -33,19 +73,50 @@ const remixImage = async (image, prompt) => {
     throw new Error("Prompt is required");
   }
 
-  // Convert Node.js Buffer → Blob
-  const imageBlob = new Blob([image]);
+  // Node.js Buffer → Blob
+  const imageBlob = new Blob(
+    [image],
+    {
+      type: "image/png",
+    }
+  );
 
-  const result = await client.imageToImage({
-    provider: "auto",
-    model: "black-forest-labs/FLUX.1-Kontext-dev",
-    inputs: imageBlob,
-    parameters: {
-      prompt: prompt.trim(),
-    },
-  });
+  const formData = new FormData();
 
-  return result;
+  formData.append(
+    "input_image_0",
+    imageBlob,
+    "input.png"
+  );
+
+  formData.append(
+    "prompt",
+    prompt.trim()
+  );
+
+  formData.append(
+    "width",
+    "1024"
+  );
+
+  formData.append(
+    "height",
+    "1024"
+  );
+
+  const result =
+    await callCloudflareAI(formData);
+
+  if (!result?.result?.image) {
+    throw new Error(
+      "Cloudflare did not return a remixed image"
+    );
+  }
+
+  return Buffer.from(
+    result.result.image,
+    "base64"
+  );
 };
 
 // -----------------------------------
