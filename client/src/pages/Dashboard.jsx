@@ -47,7 +47,7 @@ function Dashboard() {
         }
 
         const response = await fetch(
-          "http://localhost:5000/api/creation/history",
+          `${import.meta.env.VITE_API_URL}/api/creation/history`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -91,7 +91,7 @@ function Dashboard() {
       const finalPrompt = `${prompt.trim()}, ${style} style, highly detailed, beautiful composition, cinematic lighting`;
 
       const response = await fetch(
-        "http://localhost:5000/api/image/generate",
+        `${import.meta.env.VITE_API_URL}/api/image/generate`,
         {
           method: "POST",
           headers: {
@@ -146,7 +146,7 @@ function Dashboard() {
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/creation/save",
+        `${import.meta.env.VITE_API_URL}/api/creation/save`,
         {
           method: "POST",
           headers: {

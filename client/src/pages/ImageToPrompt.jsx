@@ -47,7 +47,7 @@ function ImageToPrompt() {
       formData.append("image", image);
 
       const response = await fetch(
-        "http://127.0.0.1:8000/image-to-prompt",
+        `${import.meta.env.VITE_PYTHON_API_URL || "http://127.0.0.1:8000"}/image-to-prompt`,
         {
           method: "POST",
           body: formData,
@@ -137,7 +137,7 @@ ${generatedPrompt}`
       );
 
       const response = await fetch(
-        "http://localhost:5000/api/image/remix",
+        `${import.meta.env.VITE_API_URL}/api/image/remix`,
         {
           method: "POST",
           body: formData,
@@ -193,7 +193,7 @@ ${generatedPrompt}`
       }
 
       const response = await fetch(
-        "http://localhost:5000/api/creation/save",
+        `${import.meta.env.VITE_API_URL}/api/creation/save`,
         {
           method: "POST",
           headers: {
