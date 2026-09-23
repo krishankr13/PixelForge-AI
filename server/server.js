@@ -60,7 +60,7 @@ mongoose
       "MongoDB Connected Successfully 🚀"
     );
 
-    app.listen(PORT, () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(
         `PixelForge AI server running on port ${PORT}`
       );
