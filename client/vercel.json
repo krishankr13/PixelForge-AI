@@ -1,0 +1,9 @@
+
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://pixelforge-ai-vs7o.onrender.com/api/:path*"
+    }
+  ]
+}
